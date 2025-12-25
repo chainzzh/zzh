@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>圣诞小惊喜 ✨</title>
+    <style>
+        /* 全局样式重置 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+        }
+
+        /* 页面背景（渐变动画）- 允许滑动 */
+        body {
+            background: linear-gradient(135deg, #1a2a6c 0%, #b21f1f 50%, #fdbb2d 100%);
+            background-size: 400% 400%;
+            animation: bgGradient 15s ease infinite;
+            min-height: 100vh;
+            overflow: auto; /* 允许上下滑动 */
+            padding: 10px 0; /* 上下留白 */
+        }
+
+        /* 背景渐变动画 */
+        @keyframes bgGradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* 雪花动画（点击交互）- 缩小雪花尺寸 */
+        .snowflake {
+            position: absolute;
+            color: #fff;
+            font-size: 10px;
+            opacity: 0.8;
+            animation: snowfall linear infinite;
+            user-select: none;
+            z-index: 1;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .snowflake:active {
+            transform: scale(1.5) rotate(180deg);
+            color: #ffd700;
+        }
+
+        @keyframes snowfall {
+            0% {
+                transform: translateY(-10px) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.8;
+            }
+            90% {
+                opacity: 0.8;
+            }
+            100% {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* 圣诞卡片容器 - 缩小尺寸+相对定位+适配手机 */
+        .christmas-card {
+            position: relative; /* 取消绝对定位，允许滑动 */
+            margin: 20px auto; /* 上下留白，居中 */
+            background: rgba(255, 255, 255, 0.95);
+            width: 92%; /* 适配手机宽度 */
+            max-width: 400px; /* 缩小最大宽度 */
+            padding: 25px 20px; /* 减少内边距 */
+            border-radius: 18px;
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.4);
+            text-align: center;
+            z-index: 10;
+            border: 4px solid #2e8b57;
+            transition: transform 0.5s ease;
+        }
+
+        .christmas-card:hover {
+            transform: scale(1.02);
+        }
+
+        /* 圣诞树+星星 - 缩小尺寸 */
+        .christmas-tree {
+            font-size: 60px;
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        .star {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 24px;
+            animation: twinkle 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes twinkle {
+            from { opacity: 0.5; transform: translateX(-50%) scale(0.9); }
+            to { opacity: 1; transform: translateX(-50%) scale(1.1); }
+        }
+
+        /* 标题样式 - 缩小字体 */
+        .card-title {
+            color: #2e8b57;
+            font-size: 26px;
+            margin-bottom: 12px;
+            text-shadow: 2px 2px 3px rgba(0, 0, 0, 0.2);
+        }
+
+        /* 祝福语样式 - 删除忙的文案，缩小字体 */
+        .card-message {
+            color: #333;
+            font-size: 17px;
+            line-height: 1.7;
+            margin: 15px 0;
+        }
+
+        /* 拆礼提示文字 - 缩小字体 */
+        .gift-tip {
+            font-size: 16px;
+            color: #666;
+            margin: 8px 0;
+        }
+
+        /* 署名样式 - 缩小字体 */
+        .card-signature {
+            color: #2e8b57;
+            font-size: 16px;
+            margin-top: 20px;
+            font-style: italic;
+        }
+
+        /* 礼物盒 - 缩小尺寸 */
+        .gift-box {
+            margin: 8px auto 15px;
+            width: 120px;
+            height: 120px;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .gift-box:hover {
+            transform: scale(1.05);
+        }
+
+        .gift-box-inner {
+            width: 100%;
+            height: 100%;
+            background: #e74c3c;
+            border-radius: 10px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            color: #fff;
+            transition: all 0.5s ease;
+        }
+
+        /* 礼物盒拆箱动画 */
+        .gift-box.opened .gift-box-inner {
+            transform: translateY(-15px);
+            opacity: 0.8;
+            animation: giftShake 0.5s ease;
+        }
+
+        @keyframes giftShake {
+            0% { transform: translateY(-15px) rotate(0deg); }
+            25% { transform: translateY(-15px) rotate(5deg); }
+            50% { transform: translateY(-15px) rotate(0deg); }
+            75% { transform: translateY(-15px) rotate(-5deg); }
+            100% { transform: translateY(-15px) rotate(0deg); }
+        }
+
+        .gift-box-ribbon {
+            position: absolute;
+            background: #f1c40f;
+        }
+
+        .gift-box-ribbon-h {
+            width: 100%;
+            height: 16px;
+            top: 50%;
+            left: 0;
+            transform: translateY(-50%);
+        }
+
+        .gift-box-ribbon-v {
+            width: 16px;
+            height: 100%;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        /* 礼物容器 - 缩小间距 */
+        .gifts-container {
+            margin: 15px auto 10px;
+            width: 90%;
+            max-width: 350px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        /* 单个礼物卡片 - 缩小尺寸和内边距 */
+        .single-gift {
+            font-size: 17px;
+            color: #333;
+            font-weight: 600;
+            padding: 15px 12px;
+            background: linear-gradient(120deg, #fdfbfb 0%, #ebedee 100%);
+            border-radius: 12px;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.08);
+            border: 2px solid #f1c40f;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            opacity: 0;
+            height: 0;
+            overflow: hidden;
+            transition: all 0.5s ease;
+        }
+
+        .single-gift.show {
+            opacity: 1;
+            height: auto;
+            padding: 15px 12px;
+        }
+
+        /* 礼物emoji - 缩小尺寸 */
+        .single-gift .emoji {
+            font-size: 22px;
+            display: inline-block;
+            transition: transform 0.3s ease;
+        }
+
+        .single-gift:hover .emoji {
+            transform: rotate(15deg) scale(1.1);
+        }
+
+        /* 最终提示 - 缩小字体 */
+        .gift-final {
+            margin-top: 15px;
+            font-size: 17px;
+            color: #9e2a2b;
+            font-weight: bold;
+            opacity: 0;
+            height: 0;
+            overflow: hidden;
+            transition: all 0.8s ease;
+            padding: 8px 0;
+        }
+
+        .gift-final.show {
+            opacity: 1;
+            height: 40px;
+        }
+
+        /* 按钮样式 - 缩小尺寸 */
+        .btn {
+            margin-top: 15px;
+            padding: 10px 25px;
+            background: linear-gradient(90deg, #2e8b57, #1a5238);
+            color: #fff;
+            border: none;
+            border-radius: 50px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(46, 139, 87, 0.6);
+        }
+    </style>
+</head>
+<body>
+    <!-- 背景音乐 -->
+    <audio id="christmas-music" loop preload="auto">
+        <source src="https://music.163.com/song/media/outer/url?id=186037.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- 圣诞卡片 -->
+    <div class="christmas-card">
+        <div class="christmas-tree">
+            <span class="star">⭐</span>
+            🎄
+        </div>
+        <h1 class="card-title">圣诞小惊喜 ✨</h1>
+        <p class="card-message">
+            嗨～小吴同学，辛苦啦 💛<br>
+            圣诞的钟声敲响，雪花悄悄飘落，<br>
+            愿这个温暖的节日里，能卸下所有疲惫，<br>
+            有美食、有欢笑、有不期而遇的美好，<br>
+            祝你万事顺遂，天天都有小开心～
+        </p>
+        
+        <!-- 拆礼提示 -->
+        <div class="gift-tip" id="giftTip">点击礼物盒拆第一个惊喜 🎁</div>
+        
+        <!-- 互动礼物盒 -->
+        <div class="gift-box" id="giftBox">
+            <div class="gift-box-inner">🎁</div>
+            <div class="gift-box-ribbon gift-box-ribbon-h"></div>
+            <div class="gift-box-ribbon gift-box-ribbon-v"></div>
+        </div>
+        
+        <!-- 所有礼物展示容器 -->
+        <div class="gifts-container">
+            <div class="single-gift" id="gift1">
+                <span class="emoji">🍲</span>
+                <span class="gift-text">火锅优惠券</span>
+            </div>
+            <div class="single-gift" id="gift2">
+                <span class="emoji">🎬</span>
+                <span class="gift-text">双人电影票免费券</span>
+            </div>
+            <div class="single-gift" id="gift3">
+                <span class="emoji">😜</span>
+                <span class="gift-text">小张同学的一天使用权</span>
+            </div>
+        </div>
+        
+        <!-- 最终提示 -->
+        <div class="gift-final" id="giftFinal">
+            所有惊喜已解锁 ✨ 愿小吴同学圣诞快乐～
+        </div>
+
+        <p class="card-signature">—— 小张同学</p>
+        <button class="btn" id="musicBtn">点击开启圣诞音乐 🎵</button>
+    </div>
+
+    <script>
+        // 等待DOM完全加载后再绑定事件
+        document.addEventListener('DOMContentLoaded', function() {
+            // 获取元素
+            const giftBox = document.getElementById('giftBox');
+            const giftTip = document.getElementById('giftTip');
+            const gift1 = document.getElementById('gift1');
+            const gift2 = document.getElementById('gift2');
+            const gift3 = document.getElementById('gift3');
+            const giftFinal = document.getElementById('giftFinal');
+            const musicBtn = document.getElementById('musicBtn');
+            const music = document.getElementById('christmas-music');
+            
+            let clickCount = 0; // 记录点击次数（0-3）
+            const maxClick = 3; // 最多点击3次
+
+            // 1. 雪花生成函数 - 减少雪花数量，适配手机
+            function createSnowflakes() {
+                const snowCount = 60; // 减少雪花数量，避免卡顿
+                const body = document.body;
+
+                for (let i = 0; i < snowCount; i++) {
+                    const snowflake = document.createElement('div');
+                    snowflake.className = 'snowflake';
+                    const snowIcons = ['❄️', '❅', '❆'];
+                    snowflake.textContent = snowIcons[Math.floor(Math.random() * snowIcons.length)];
+                    
+                    const size = Math.random() * 8 + 4;
+                    const left = Math.random() * 100;
+                    const duration = Math.random() * 15 + 10;
+                    const delay = Math.random() * 8;
+
+                    snowflake.style.fontSize = `${size}px`;
+                    snowflake.style.left = `${left}%`;
+                    snowflake.style.animationDuration = `${duration}s`;
+                    snowflake.style.animationDelay = `${delay}s`;
+
+                    snowflake.addEventListener('click', function() {
+                        this.style.color = '#ffd700';
+                        this.style.transform = 'scale(2) rotate(180deg)';
+                        setTimeout(() => {
+                            this.style.color = '#fff';
+                            this.style.transform = '';
+                        }, 300);
+                    });
+
+                    body.appendChild(snowflake);
+                }
+            }
+
+            // 2. 播放音乐函数
+            function playMusic() {
+                music.volume = 0.5;
+                music.play().catch(err => {
+                    alert('需要你手动允许播放音乐哦～');
+                });
+                musicBtn.textContent = '愿美好常伴 🎉';
+                musicBtn.disabled = true;
+                musicBtn.style.opacity = '0.8';
+            }
+
+            // 3. 拆礼物核心逻辑：点击3次，逐个显示，最终全显
+            function openGift() {
+                // 仅在点击次数小于3时生效
+                if (clickCount < maxClick) {
+                    clickCount++; // 点击次数+1
+                    
+                    // 礼物盒拆箱动画
+                    giftBox.classList.add('opened');
+                    setTimeout(() => {
+                        giftBox.classList.remove('opened');
+                    }, 1000);
+
+                    // 根据点击次数显示对应礼物
+                    switch(clickCount) {
+                        case 1:
+                            gift1.classList.add('show'); // 显示第一个礼物
+                            giftTip.textContent = '点击礼物盒拆第二个惊喜 🎁';
+                            break;
+                        case 2:
+                            gift2.classList.add('show'); // 显示第二个礼物（第一个礼物保留）
+                            giftTip.textContent = '点击礼物盒拆第三个惊喜 🎁';
+                            break;
+                        case 3:
+                            gift3.classList.add('show'); // 显示第三个礼物（前两个礼物保留）
+                            giftTip.textContent = '所有惊喜已拆完 ✨';
+                            giftFinal.classList.add('show'); // 显示最终暖心提示
+                            break;
+                    }
+                }
+            }
+
+            // 绑定事件
+            giftBox.addEventListener('click', openGift);
+            musicBtn.addEventListener('click', playMusic);
+
+            // 生成雪花
+            createSnowflakes();
+        });
+    </script>
+</body>
+</html>
