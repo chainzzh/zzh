@@ -12,7 +12,6 @@
             box-sizing: border-box;
             font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
         }
-
         /* 页面背景（渐变动画）- 允许滑动 */
         body {
             background: linear-gradient(135deg, #1a2a6c 0%, #b21f1f 50%, #fdbb2d 100%);
@@ -21,15 +20,15 @@
             min-height: 100vh;
             overflow: auto; /* 允许上下滑动 */
             padding: 10px 0; /* 上下留白 */
+            position: relative; /* 为烟花绝对定位做父容器 */
+            overflow-x: hidden; /* 防止左右滚动 */
         }
-
         /* 背景渐变动画 */
         @keyframes bgGradient {
             0% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
             100% { background-position: 0% 50%; }
         }
-
         /* 雪花动画（点击交互）- 缩小雪花尺寸 */
         .snowflake {
             position: absolute;
@@ -42,12 +41,10 @@
             cursor: pointer;
             transition: all 0.2s ease;
         }
-
         .snowflake:active {
             transform: scale(1.5) rotate(180deg);
             color: #ffd700;
         }
-
         @keyframes snowfall {
             0% {
                 transform: translateY(-10px) rotate(0deg);
@@ -64,7 +61,56 @@
                 opacity: 0;
             }
         }
-
+        /* 烟花容器（承载上升的烟花和炸开的粒子） */
+        .firework {
+            position: absolute;
+            z-index: 2; /* 介于雪花和卡片之间，不遮挡内容 */
+        }
+        /* 上升的烟花弹（部分烟花不需要上升，直接炸开） */
+        .firework-rocket {
+            width: 6px;
+            height: 20px;
+            background: linear-gradient(to top, #000, currentColor);
+            border-radius: 3px 3px 0 0;
+            opacity: 0;
+            animation: rocketRise 0.8s ease-out forwards;
+        }
+        /* 快速上升动画（适配中间区域生成的烟花） */
+        @keyframes rocketRise {
+            0% {
+                transform: translateY(0);
+                opacity: 1;
+                box-shadow: 0 0 10px 2px currentColor;
+            }
+            100% {
+                transform: translateY(-30vh); /* 上升距离缩短，适配中间区域 */
+                opacity: 0;
+                box-shadow: 0 0 20px 5px currentColor;
+            }
+        }
+        /* 炸开的烟花粒子（扩散范围更大，覆盖核心区域） */
+        .firework-particle {
+            position: absolute;
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            opacity: 0;
+            animation: particleExplode 1.2s ease-out forwards;
+            filter: drop-shadow(0 0 3px rgba(255,255,255,0.8)); /* 增加光晕，更炫彩 */
+        }
+        /* 粒子炸开动画（扩散范围扩大，覆盖卡片周围） */
+        @keyframes particleExplode {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+                box-shadow: 0 0 8px 2px currentColor;
+            }
+            100% {
+                transform: scale(0.6) translate(var(--x), var(--y)); /* 扩散距离增加 */
+                opacity: 0;
+                box-shadow: 0 0 20px 5px currentColor;
+            }
+        }
         /* 圣诞卡片容器 - 缩小尺寸+相对定位+适配手机 */
         .christmas-card {
             position: relative; /* 取消绝对定位，允许滑动 */
@@ -76,22 +122,19 @@
             border-radius: 18px;
             box-shadow: 0 0 30px rgba(255, 215, 0, 0.4);
             text-align: center;
-            z-index: 10;
+            z-index: 10; /* 保持最高层级，不被烟花遮挡 */
             border: 4px solid #2e8b57;
             transition: transform 0.5s ease;
         }
-
         .christmas-card:hover {
             transform: scale(1.02);
         }
-
         /* 圣诞树+星星 - 缩小尺寸 */
         .christmas-tree {
             font-size: 60px;
             margin-bottom: 15px;
             position: relative;
         }
-
         .star {
             position: absolute;
             top: -15px;
@@ -100,12 +143,10 @@
             font-size: 24px;
             animation: twinkle 2s ease-in-out infinite alternate;
         }
-
         @keyframes twinkle {
             from { opacity: 0.5; transform: translateX(-50%) scale(0.9); }
             to { opacity: 1; transform: translateX(-50%) scale(1.1); }
         }
-
         /* 标题样式 - 缩小字体 */
         .card-title {
             color: #2e8b57;
@@ -113,7 +154,6 @@
             margin-bottom: 12px;
             text-shadow: 2px 2px 3px rgba(0, 0, 0, 0.2);
         }
-
         /* 祝福语样式 - 删除忙的文案，缩小字体 */
         .card-message {
             color: #333;
@@ -121,14 +161,12 @@
             line-height: 1.7;
             margin: 15px 0;
         }
-
         /* 拆礼提示文字 - 缩小字体 */
         .gift-tip {
             font-size: 16px;
             color: #666;
             margin: 8px 0;
         }
-
         /* 署名样式 - 缩小字体 */
         .card-signature {
             color: #2e8b57;
@@ -136,7 +174,6 @@
             margin-top: 20px;
             font-style: italic;
         }
-
         /* 礼物盒 - 缩小尺寸 */
         .gift-box {
             margin: 8px auto 15px;
@@ -146,11 +183,9 @@
             cursor: pointer;
             transition: all 0.3s ease;
         }
-
         .gift-box:hover {
             transform: scale(1.05);
         }
-
         .gift-box-inner {
             width: 100%;
             height: 100%;
@@ -164,14 +199,12 @@
             color: #fff;
             transition: all 0.5s ease;
         }
-
         /* 礼物盒拆箱动画 */
         .gift-box.opened .gift-box-inner {
             transform: translateY(-15px);
             opacity: 0.8;
             animation: giftShake 0.5s ease;
         }
-
         @keyframes giftShake {
             0% { transform: translateY(-15px) rotate(0deg); }
             25% { transform: translateY(-15px) rotate(5deg); }
@@ -179,12 +212,10 @@
             75% { transform: translateY(-15px) rotate(-5deg); }
             100% { transform: translateY(-15px) rotate(0deg); }
         }
-
         .gift-box-ribbon {
             position: absolute;
             background: #f1c40f;
         }
-
         .gift-box-ribbon-h {
             width: 100%;
             height: 16px;
@@ -192,7 +223,6 @@
             left: 0;
             transform: translateY(-50%);
         }
-
         .gift-box-ribbon-v {
             width: 16px;
             height: 100%;
@@ -200,7 +230,6 @@
             left: 50%;
             transform: translateX(-50%);
         }
-
         /* 礼物容器 - 缩小间距 */
         .gifts-container {
             margin: 15px auto 10px;
@@ -210,7 +239,6 @@
             flex-direction: column;
             gap: 10px;
         }
-
         /* 单个礼物卡片 - 缩小尺寸和内边距 */
         .single-gift {
             font-size: 17px;
@@ -230,24 +258,20 @@
             overflow: hidden;
             transition: all 0.5s ease;
         }
-
         .single-gift.show {
             opacity: 1;
             height: auto;
             padding: 15px 12px;
         }
-
         /* 礼物emoji - 缩小尺寸 */
         .single-gift .emoji {
             font-size: 22px;
             display: inline-block;
             transition: transform 0.3s ease;
         }
-
         .single-gift:hover .emoji {
             transform: rotate(15deg) scale(1.1);
         }
-
         /* 最终提示 - 缩小字体 */
         .gift-final {
             margin-top: 15px;
@@ -260,12 +284,10 @@
             transition: all 0.8s ease;
             padding: 8px 0;
         }
-
         .gift-final.show {
             opacity: 1;
             height: 40px;
         }
-
         /* 按钮样式 - 缩小尺寸 */
         .btn {
             margin-top: 15px;
@@ -278,7 +300,6 @@
             cursor: pointer;
             transition: all 0.3s ease;
         }
-
         .btn:hover {
             transform: scale(1.05);
             box-shadow: 0 0 15px rgba(46, 139, 87, 0.6);
@@ -290,7 +311,6 @@
     <audio id="christmas-music" loop preload="auto">
         <source src="https://music.163.com/song/media/outer/url?id=186037.mp3" type="audio/mpeg">
     </audio>
-
     <!-- 圣诞卡片 -->
     <div class="christmas-card">
         <div class="christmas-tree">
@@ -336,11 +356,9 @@
         <div class="gift-final" id="giftFinal">
             所有惊喜已解锁 ✨ 愿小吴同学圣诞快乐～
         </div>
-
         <p class="card-signature">—— 小张同学</p>
         <button class="btn" id="musicBtn">点击开启圣诞音乐 🎵</button>
     </div>
-
     <script>
         // 等待DOM完全加载后再绑定事件
         document.addEventListener('DOMContentLoaded', function() {
@@ -353,6 +371,8 @@
             const giftFinal = document.getElementById('giftFinal');
             const musicBtn = document.getElementById('musicBtn');
             const music = document.getElementById('christmas-music');
+            const body = document.body;
+            const card = document.querySelector('.christmas-card'); // 获取圣诞卡片元素
             
             let clickCount = 0; // 记录点击次数（0-3）
             const maxClick = 3; // 最多点击3次
@@ -360,8 +380,6 @@
             // 1. 雪花生成函数 - 减少雪花数量，适配手机
             function createSnowflakes() {
                 const snowCount = 60; // 减少雪花数量，避免卡顿
-                const body = document.body;
-
                 for (let i = 0; i < snowCount; i++) {
                     const snowflake = document.createElement('div');
                     snowflake.className = 'snowflake';
@@ -372,12 +390,10 @@
                     const left = Math.random() * 100;
                     const duration = Math.random() * 15 + 10;
                     const delay = Math.random() * 8;
-
                     snowflake.style.fontSize = `${size}px`;
                     snowflake.style.left = `${left}%`;
                     snowflake.style.animationDuration = `${duration}s`;
                     snowflake.style.animationDelay = `${delay}s`;
-
                     snowflake.addEventListener('click', function() {
                         this.style.color = '#ffd700';
                         this.style.transform = 'scale(2) rotate(180deg)';
@@ -386,12 +402,105 @@
                             this.style.transform = '';
                         }, 300);
                     });
-
                     body.appendChild(snowflake);
                 }
             }
 
-            // 2. 播放音乐函数
+            // 2. 炫彩烟花生成核心函数（重点优化：分布+覆盖核心区域）
+            function createFirework() {
+                // 1. 创建烟花容器（承载火箭和粒子）
+                const firework = document.createElement('div');
+                firework.className = 'firework';
+                
+                // 关键优化1：烟花生成位置覆盖整个页面（垂直方向从底部到卡片上方）
+                const cardRect = card.getBoundingClientRect(); // 获取卡片位置信息
+                // 垂直位置：随机在底部（0vh）到卡片上方（cardRect.top + 20vh）之间
+                const randomBottom = Math.random() * (cardRect.top + 20) / window.innerHeight * 100;
+                firework.style.bottom = `${randomBottom}vh`;
+                
+                // 关键优化2：水平位置集中在卡片周围（20%-80%区间），核心区域更密集
+                const randomLeft = Math.random() * 60 + 20; // 20%-80%区间
+                firework.style.left = `${randomLeft}%`;
+                
+                // 随机烟花颜色（12种炫彩色系，更丰富）
+                const colors = [
+                    '#ff3838', '#ff9f1a', '#f1c40f', '#2ecc71', '#3498db', '#9b59b6',
+                    '#e91e63', '#ffd700', '#1abc9c', '#34495e', '#f39c12', '#8e44ad'
+                ];
+                const mainColor = colors[Math.floor(Math.random() * colors.length)];
+                
+                // 30%概率生成“直接炸开”的烟花（不需要上升，直接在核心区域炸开）
+                const isDirectExplode = Math.random() > 0.7;
+                if (!isDirectExplode) {
+                    // 2. 创建上升的烟花弹（针对底部生成的烟花）
+                    const rocket = document.createElement('div');
+                    rocket.className = 'firework-rocket';
+                    rocket.style.color = mainColor;
+                    firework.appendChild(rocket);
+                }
+                
+                // 3. 添加到页面
+                body.appendChild(firework);
+                
+                // 4. 触发炸开效果（直接炸开/上升后炸开）
+                const explodeDelay = isDirectExplode ? 0 : 800; // 直接炸开无延迟，上升后延迟0.8s
+                setTimeout(() => {
+                    // 移除火箭（如果有）
+                    const rocket = firework.querySelector('.firework-rocket');
+                    if (rocket) rocket.remove();
+                    
+                    // 关键优化3：粒子数量增加到40-60个，炸开范围更大
+                    const particleCount = Math.floor(Math.random() * 20) + 40;
+                    for (let i = 0; i < particleCount; i++) {
+                        const particle = document.createElement('div');
+                        particle.className = 'firework-particle';
+                        
+                        // 粒子颜色：主色+随机辅助色，更炫彩
+                        const randomColor = colors[Math.floor(Math.random() * colors.length)];
+                        particle.style.color = Math.random() > 0.4 ? mainColor : randomColor;
+                        
+                        // 粒子随机大小（3-7px）
+                        const size = Math.random() * 4 + 3;
+                        particle.style.width = `${size}px`;
+                        particle.style.height = `${size}px`;
+                        
+                        // 关键优化4：粒子扩散距离增加（80-150px），覆盖卡片周围
+                        const angle = Math.random() * Math.PI * 2; // 0-360度随机角度
+                        const distance = Math.random() * 70 + 80; // 扩散距离80-150px
+                        const x = Math.cos(angle) * distance;
+                        const y = Math.sin(angle) * distance;
+                        
+                        // 通过CSS变量传递偏移量
+                        particle.style.setProperty('--x', `${x}px`);
+                        particle.style.setProperty('--y', `${y}px`);
+                        
+                        // 粒子炸开动画延迟（0-0.5s），层次感更强
+                        particle.style.animationDelay = `${Math.random() * 0.5}s`;
+                        
+                        firework.appendChild(particle);
+                    }
+                }, explodeDelay);
+                
+                // 5. 动画结束后移除烟花容器，避免DOM堆积
+                setTimeout(() => {
+                    firework.remove();
+                }, explodeDelay + 1200); // 总时长=炸开延迟+粒子动画时长
+            }
+
+            // 3. 每秒生成5-8个烟花，确保整个界面充满
+            function startFireworkRain() {
+                // 初始延迟0.3秒启动，快速进入效果
+                setTimeout(() => {
+                    setInterval(() => {
+                        const fireworksPerSecond = Math.floor(Math.random() * 4) + 5; // 5-8个/秒
+                        for (let i = 0; i < fireworksPerSecond; i++) {
+                            createFirework();
+                        }
+                    }, 1000); // 1秒间隔
+                }, 300);
+            }
+
+            // 4. 播放音乐函数
             function playMusic() {
                 music.volume = 0.5;
                 music.play().catch(err => {
@@ -402,7 +511,7 @@
                 musicBtn.style.opacity = '0.8';
             }
 
-            // 3. 拆礼物核心逻辑：点击3次，逐个显示，最终全显
+            // 5. 拆礼物核心逻辑：点击3次，逐个显示，最终全显
             function openGift() {
                 // 仅在点击次数小于3时生效
                 if (clickCount < maxClick) {
@@ -413,7 +522,6 @@
                     setTimeout(() => {
                         giftBox.classList.remove('opened');
                     }, 1000);
-
                     // 根据点击次数显示对应礼物
                     switch(clickCount) {
                         case 1:
@@ -436,11 +544,11 @@
             // 绑定事件
             giftBox.addEventListener('click', openGift);
             musicBtn.addEventListener('click', playMusic);
-
-            // 生成雪花
+            
+            // 生成雪花和密集烟花
             createSnowflakes();
+            startFireworkRain();
         });
     </script>
 </body>
-
 </html>
